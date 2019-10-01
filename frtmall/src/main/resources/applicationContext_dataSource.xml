@@ -9,7 +9,9 @@
      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <context:component-scan base-package="com.frt" annotation-config="true"/>
+    <context:component-scan base-package="com.frt" annotation-config="true">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
 
     <bean id="propertyConfigurer"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -22,13 +24,14 @@
         </property>
         <property name="fileEncoding" value="utf-8"/>
     </bean>
-
-
+    <context:property-placeholder location="classpath:datasource.properties"/>
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+
         <property name="driverClassName" value="${db.driverClassName}"/>
         <property name="url" value="${db.url}"/>
         <property name="username" value="${db.username}"/>
         <property name="password" value="${db.password}"/>
+
         <!-- 连接池启动时的初始值 -->
         <property name="initialSize" value="${db.initialSize}"/>
         <!-- 连接池的最大值 -->
@@ -40,12 +43,12 @@
         <!-- 最大建立连接等待时间。如果超过此时间将接到异常。设为－1表示无限制 -->
         <property name="maxWait" value="${db.maxWait}"/>
         <!--#给出一条简单的sql语句进行验证 -->
-         <!--<property name="validationQuery" value="select getdate()" />-->
+        <!--<property name="validationQuery" value="select getdate()" />-->
         <property name="defaultAutoCommit" value="${db.defaultAutoCommit}"/>
         <!-- 回收被遗弃的（一般是忘了释放的）数据库连接到连接池中 -->
-         <!--<property name="removeAbandoned" value="true" />-->
+        <!--<property name="removeAbandoned" value="true" />-->
         <!-- 数据库连接过多长时间不用将被视为被遗弃而收回连接池中 -->
-         <!--<property name="removeAbandonedTimeout" value="120" />-->
+        <!--<property name="removeAbandonedTimeout" value="120" />-->
         <!-- #连接的超时时间，默认为半小时。 -->
         <property name="minEvictableIdleTimeMillis" value="${db.minEvictableIdleTimeMillis}"/>
 
@@ -76,18 +79,18 @@
         </property>
 
     </bean>
-     <!--配置dao接口的位置-->
+    <!--配置dao接口的位置-->
     <bean name="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.mmall.dao"/>
+        <property name="basePackage" value="com.frt.dao"/>
     </bean>
-
-    <!-- 使用@Transactional进行声明式事务管理需要声明下面这行 -->
-    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
-    <!-- 事务管理 -->
+ <!-- 事务管理 -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
         <property name="rollbackOnCommitFailure" value="true"/>
     </bean>
+
+    <!-- 使用@Transactional进行声明式事务管理需要声明下面这行 -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
 
 
 </beans>

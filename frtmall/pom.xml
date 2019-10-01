@@ -258,6 +258,8 @@
   <build>
     <finalName>frtmall</finalName>
     <plugins>
+      <!--本地的jar包发布到服务器上-->
+      <!--项目发布的maven的包也在lib下，做一个统一-->
       <!-- geelynote maven的核心插件之-complier插件默认只支持编译Java 1.4，因此需要加上支持高版本jre的配置，在pom.xml里面加上 增加编译插件 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -271,6 +273,7 @@
           </compilerArguments>
         </configuration>
       </plugin>
+      <!---->
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <version>3.1.0</version>

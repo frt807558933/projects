@@ -130,9 +130,9 @@
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
+    </if>
       <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time =now()
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -146,8 +146,40 @@
       question = #{question,jdbcType=VARCHAR},
       answer = #{answer,jdbcType=VARCHAR},
       role = #{role,jdbcType=INTEGER},
-      create_time = now(),
-      update_time = now()
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time =now()
     where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--检查用户存在的方法-->
+  <select id="checkUser" resultType="int" parameterType="string">
+     SELECT COUNT(1) FROM mmall_user WHERE  username=#{username}
+  </select>
+  <!--登录的方法，切记，查什么，写什么，不要用*，影响效率|返回类型，前面reslutMap定义过，直接使用。参数类型，有多个，所以用map-->
+  <select id="login" resultMap="BaseResultMap" parameterType="map">
+    SELECT  <include refid="Base_Column_List"></include> FROM  mmall_user WHERE username=#{username} and password=#{password}
+  </select>
+  <!--检查邮箱是否存在的方法-->
+  <select id="checkEmail" resultType="int" parameterType="string">
+    SELECT COUNT(1) FROM mmall_user WHERE  email=#{email}
+  </select>
+  <!--找回密码的问题的方法-->
+  <select id="getQuestion" resultType="String" parameterType="string">
+    SELECT question FROM mmall_user WHERE  username=#{username}
+  </select>
+  <!--验证答案的方法-->
+  <select id="getAnswer" resultType="int" parameterType="map">
+    SELECT count(1) FROM mmall_user WHERE  username=#{username} and question=#{question} and answer=#{answer}
+  </select>
+  <!--离线更新密码-->
+  <update id="updatePassword" parameterType="string">
+    update mmall_user set password=#{password}, update_time = now() where username=#{username}
+  </update>
+  <!--检验密码-->
+  <select id="checkPassword" parameterType="map" resultType="integer">
+    SELECT count(1) from mmall_user WHERE id=#{id} and password=#{password}
+  </select>
+  <!--在线更改密码-->
+  <update id="loginResetPassword" parameterType="map">
+     UPDATE  mmall_user set password=#{password},update_time = now()where id=#{id}
   </update>
 </mapper>
